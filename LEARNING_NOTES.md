@@ -205,7 +205,8 @@ so compare only within one run.
   range [0, 0.97], ±0.0019 — far from the 0.08 smoke-test range, because real COCO calibration images produce
   confident scores.
 - **The stricter metric falls more**, as predicted: mAP@0.5 drops 5.67 points vs FP32 (5.34 vs `pc_headfp32`),
-  while mAP@.5:.95 drops 8.21 points (7.16 vs `pc_headfp32`). The box quantization step is the cause.
+  while mAP@.5:.95 drops 8.21 points (7.16 vs `pc_headfp32`). *Correction (2026-10-28, same day):* the output step
+  (±1.3 px) cannot explain a 5.3-point loss at IoU 0.5. The cause is **not established**; see "Attribution" below.
 - **The split dominates `pc_all`, not `pc_headfp32`.** It runs at `pc_all` speed (8.88 vs 8.96 ms) but is usable.
   Versus `pc_headfp32` it is ~25% faster (2.97 ms) at a cost of 5.34 mAP@0.5; the head-FP32 model remains the
   recommended accuracy/speed point.
@@ -214,3 +215,33 @@ so compare only within one run.
 6. `10_collect_results.py` assumed every model in `latency_split.csv` had a row in `map_split.json`. The mAP command
    deliberately omitted `pc_all` (a known 0-detection control), so the collector raised `KeyError`. Fixed by guarding
    the mAP rows with `if m in spl_map`: latency-only coverage is legitimate and should not abort the table.
+
+### Attribution: where the split model's error really comes from (`13_attribute_split.py`)
+Reading every Q scale in the head of `yolov8n_int8_split_pc_all.onnx` (not just the outputs) shows two mechanisms
+the prediction never looked at:
+
+| tensor | units | INT8 step | in pixels |
+|---|---|---|---|
+| `Concat_8` (xywh before ×stride) | grid cells, 0–80 | 0.314 cells | 2.5 px at stride 8, **10 px at stride 32** |
+| `Sub_1` (wh) | cells, 0–28 | 0.109, then requantized to 0.314 by `Concat_8` | up to 10 px |
+| `Concat_7` (class logits) | logits, −60…3.5 | 0.25 | — |
+| `scores` (after Sigmoid) | probability | 0.0038 | scores < 0.0019 → 0, below eval conf 0.001 |
+
+- **[ONNX]** `Concat_8` repeats the output-concat hazard one level up: centers (0–80) and sizes (0–28) share one
+  scale, and all three strides share it too, so the stride multiply that follows *amplifies* the step.
+  Splitting the output fixed the symptom at the bottom of the graph, not every place where scales mix.
+- Per class, AP@0.5 vs FP32: car −11.5, truck −5.7, motorcycle −4.1, bus −1.3. Small objects suffer most, which
+  points at localization; a score floor would hit every class about equally.
+- `13_attribute_split.py` builds two variants from the split graph, each keeping ONE path FP32:
+  `_boxq` (score tail `Concat_7`+`Sigmoid` FP32, so its loss is the box path's) and `_scoreq` (the 15 box-decode
+  nodes after the DFL conv FP32, so its loss is the score path's). Both keep the DFL Softmax as QLinearSoftmax
+  (checked on the runtime graph). It also reports AP by COCO object size for all five models.
+
+**Predictions (2026-10-28, before running):** `_boxq` keeps most of the loss (≥ 2/3 of the 5.3 mAP@0.5 points),
+concentrated in AP_small; `_scoreq` lands within ~1 point of `pc_headfp32`. If `_scoreq` loses much more than that,
+the score floor matters more than the per-class pattern suggests.
+
+### Mistakes made
+7. Predicted the split model's error from the scale of the *output* tensor only (±1.3 px) and then accepted
+   "box step is the cause" when the direction matched. The magnitude did not: 1 px cannot cost 5 points at IoU 0.5.
+   The real step lives in intermediate tensors. Same lesson as mistake 5: inspect the whole graph, not one tensor.

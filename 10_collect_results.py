@@ -57,6 +57,14 @@ if pathlib.Path("results/latency_split.csv").exists() and pathlib.Path("results/
             for k in ("mAP50", "mAP50_95", "n_dets"):
                 add("3-split", m, k, spl_map[m][k], "", "09_eval_map.py --out results/map_split.json")
 
+# Phase 3 attribution (13_attribute_split.py): accuracy only, AP by object size
+if pathlib.Path("results/attribution_split.json").exists():
+    for r in json.load(open("results/attribution_split.json")):
+        for k in ("mAP50", "mAP50_95", "n_dets", "AP50_small", "AP50_medium", "AP50_large",
+                  "AP_small", "AP_medium", "AP_large"):
+            add("3-attr", r["model"] + ".onnx", k, r[k], "", "13_attribute_split.py",
+                note=f"{r['n_images']} eval images")
+
 with open("results.csv", "w", newline="") as f:
     w = csv.DictWriter(f, fieldnames=rows[0].keys()); w.writeheader(); w.writerows(rows)
 

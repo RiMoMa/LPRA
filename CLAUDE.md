@@ -47,6 +47,7 @@ python 08_benchmark.py
 python 09_eval_map.py
 python 10_collect_results.py
 python 12_split_outputs.py     # Phase 3, optional; see README for its benchmark/mAP commands
+python 13_attribute_split.py   # Phase 3, optional; needs 12 first
 ```
 
 All scripts use relative paths and must be run from the repository root. The pipeline
@@ -75,8 +76,8 @@ is numbered; keep that order in documentation and examples.
    excluded. S8 activations and `reduce_range=True` are deliberate one-setting checks,
    not defaults.
 5. **Do not hand-edit `results.csv`.** It is rebuilt by `10_collect_results.py` from
-   `results/parity_*.json`, `latency_raw.csv`, `map_overall.json`, `latency_checks.csv`, `latency_split.csv`, `map_split.json`
-   and `map_checks.json`.
+   `results/parity_*.json`, `latency_raw.csv`, `map_overall.json`, `latency_checks.csv`, `latency_split.csv`, `map_split.json`,
+   `attribution_split.json` and `map_checks.json`.
 6. **Do not commit generated heavy files:** `data/coco/`, `results/profile_*.json`,
    `results/dets/`, `.venv/`, `.py311/`, `*.data`, or editor scratch files. See
    `.gitignore`.

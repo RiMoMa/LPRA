@@ -58,7 +58,7 @@ Why this shape:
   5.34 mAP@0.5 and 7.16 mAP@.5:.95. `pc_headfp32` remains the best
   accuracy/speed trade-off.
 
-`LEARNING_NOTES.md` contains the full reasoning, graph details, mistakes and
+`INTERVIEW_NOTES.md` condenses the project into talking points. `LEARNING_NOTES.md` contains the full reasoning, graph details, mistakes and
 hypotheses. `results.csv` is generated from the raw result files, never edited by hand.
 
 ## Pipeline
@@ -81,6 +81,7 @@ Run the scripts from the repository root, in order.
 | `10_collect_results.py` | Rebuild the long-format table from raw files | `results.csv` |
 | `11_quant_checks.py` | One-setting checks: `reduce_range`, S8 activations | `models/*_rr.onnx`, `*_s8.onnx` |
 | `12_split_outputs.py` | Phase 3: graph surgery splits `output0` into `boxes` + `scores`, then INT8 with no exclusions | `models/yolov8n_split.onnx`, `*_int8_split_pc_all.onnx` |
+| `13_attribute_split.py` | Phase 3: separates box-path vs score-path error of the split model; AP by object size | `results/attribution_split.json` |
 
 ## Repository layout
 
@@ -173,6 +174,13 @@ python 09_eval_map.py --out results/map_split.json \
   models/yolov8n_prep.onnx \
   models/yolov8n_int8_pc_headfp32.onnx \
   models/yolov8n_int8_split_pc_all.onnx
+python 10_collect_results.py
+```
+
+Attribution of the split model's accuracy loss (box path vs score path, AP by size):
+
+```bash
+python 13_attribute_split.py
 python 10_collect_results.py
 ```
 
