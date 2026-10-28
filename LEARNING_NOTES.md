@@ -189,3 +189,28 @@ so compare only within one run.
   `scores` got range 0–0.08: noise images make no confident detections, so MinMax fits the scores to 0.08 and any
   real score above that would clip. **Calibration data defines the ranges; this is why the reader must be real,
   deployment-preprocessed images.** The COCO run decides the actual scores range.
+
+### Results (2026-10-28, local CPU, ORT 1.31; same protocol as Phase 2)
+| model | mean ms | speedup vs FP32 | mAP@0.5 | mAP@.5:.95 | n_dets |
+|---|---:|---:|---:|---:|---:|
+| `yolov8n_prep.onnx` (FP32) | 16.69 | 1.00× | 0.6076 | 0.4223 | 148,828 |
+| `yolov8n_int8_pc_headfp32.onnx` | 11.85 | 1.41× | 0.6043 | 0.4119 | 153,420 |
+| `yolov8n_int8_split_pc_all.onnx` | **8.88** | **1.88×** | 0.5509 | 0.3403 | 134,945 |
+| `yolov8n_int8_pc_all.onnx` | 8.96 | 1.86× | n/a* | n/a* | 0* |
+
+\* Not re-evaluated in this run; the 0 detections come from Phase 2's `map_overall.json`.
+
+- **All three predictions held.** The split restores non-zero scores (134,945 detections instead of 0); `boxes`
+  gets scale 2.61822, range [−10.47, 657.17], max rounding error ±1.3091 px; `scores` gets its own scale 0.00379,
+  range [0, 0.97], ±0.0019 — far from the 0.08 smoke-test range, because real COCO calibration images produce
+  confident scores.
+- **The stricter metric falls more**, as predicted: mAP@0.5 drops 5.67 points vs FP32 (5.34 vs `pc_headfp32`),
+  while mAP@.5:.95 drops 8.21 points (7.16 vs `pc_headfp32`). The box quantization step is the cause.
+- **The split dominates `pc_all`, not `pc_headfp32`.** It runs at `pc_all` speed (8.88 vs 8.96 ms) but is usable.
+  Versus `pc_headfp32` it is ~25% faster (2.97 ms) at a cost of 5.34 mAP@0.5; the head-FP32 model remains the
+  recommended accuracy/speed point.
+
+### Mistakes made
+6. `10_collect_results.py` assumed every model in `latency_split.csv` had a row in `map_split.json`. The mAP command
+   deliberately omitted `pc_all` (a known 0-detection control), so the collector raised `KeyError`. Fixed by guarding
+   the mAP rows with `if m in spl_map`: latency-only coverage is legitimate and should not abort the table.

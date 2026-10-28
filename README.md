@@ -12,8 +12,8 @@ pinned cores, inspection of the graph that ONNX Runtime actually runs, and COCO 
 
 Hardware: AMD Ryzen 9 7900X3D (Zen 4, AVX-512 VNNI), CPU execution provider,
 ONNX Runtime 1.31, 6 intra-op threads pinned to CCD0 (CPUs 0–5), 150 calibration
-images and 646 evaluation images. Values below are from the 2026-10-25 check run;
-compare only within the same run.
+images and 646 evaluation images. The first table is from the 2026-10-25 check
+run; the Phase 3 table is from 2026-10-28. Compare only within the same run.
 
 | Model | Mean latency | Speedup vs FP32 | mAP@0.5 | mAP@.5:.95 |
 |---|---:|---:|---:|---:|
@@ -23,13 +23,29 @@ compare only within the same run.
 | `yolov8n_int8_pc_headfp32_s8.onnx` (S8 activations) | 32.45 ms | 0.50× | 0.6030 | 0.4129 |
 | `yolov8n_int8_pc_all.onnx` / `pt_all` (head quantized too) | ≈9.0 ms | ≈1.85× | **0.0000** | **0.0000** |
 
+A second run (2026-10-28) tested the Phase 3 graph surgery: split `output0` into
+separate `boxes` and `scores` outputs, then quantize the whole graph with no
+exclusions. It produces the fastest usable model, but the box scale costs
+localization. Compare only within this table:
+
+| Model (2026-10-28 run) | Mean latency | Speedup vs FP32 | mAP@0.5 | mAP@.5:.95 | Detections |
+|---|---:|---:|---:|---:|---:|
+| `yolov8n_prep.onnx` (FP32) | 16.69 ms | 1.00× | 0.6076 | 0.4223 | 148,828 |
+| `yolov8n_int8_pc_headfp32.onnx` (recommended) | 11.85 ms | 1.41× | 0.6043 | 0.4119 | 153,420 |
+| `yolov8n_int8_split_pc_all.onnx` | **8.88 ms** | **1.88×** | 0.5509 | 0.3403 | 134,945 |
+| `yolov8n_int8_pc_all.onnx` | 8.96 ms | 1.86× | n/a* | n/a* | 0* |
+
+\* `pc_all` was not re-evaluated in the Phase 3 run; Phase 2 measured zero detections.
+
 Why this shape:
 
-- **The output head must stay FP32.** `output0` concatenates boxes in pixel units
-  (roughly −10…657) with class scores in [0, 1]. A single per-tensor MinMax scale is
-  forced to 2.618 (zero point 4), so every score rounds to zero. The `*_headfp32`
-  variants exclude the 34 head-decode nodes (`/model.22/` outside `cv2`/`cv3`) from
-  quantization. Those nodes are ~0% of the FLOPs, so this is almost free.
+- **The output head must stay FP32 — or be split before quantization.** `output0`
+  concatenates boxes in pixel units (roughly −10…657) with class scores in [0, 1]. A
+  single per-tensor MinMax scale is forced to 2.618 (zero point 4), so every score
+  rounds to zero. The `*_headfp32` variants exclude the 34 head-decode nodes
+  (`/model.22/` outside `cv2`/`cv3`) from quantization. Phase 3 instead removes the
+  final Concat and exposes `boxes`/`scores` separately; that restores non-zero scores,
+  but the box scale (±1.31 px) costs localization accuracy.
 - **Per-channel weights recover most of the loss.** `pc_headfp32` is −0.33 mAP points
   vs FP32; per-tensor `pt_headfp32` is −1.19 points.
 - **U8 activations, not ORT's default S8.** S8 looks structurally identical in the
@@ -37,6 +53,10 @@ Why this shape:
   wrapped in live Q/DQ, making it 2.8× slower than FP32 on this CPU.
 - **`reduce_range=True` buys nothing on VNNI**, where INT8 accumulates into int32
   (`vpdpbusd`). It is not used in the recommended model.
+- **The split dominates `pc_all` but not `pc_headfp32`.** Same latency as `pc_all`
+  with 134,945 detections instead of 0, but 25% faster than `pc_headfp32` costs
+  5.34 mAP@0.5 and 7.16 mAP@.5:.95. `pc_headfp32` remains the best
+  accuracy/speed trade-off.
 
 `LEARNING_NOTES.md` contains the full reasoning, graph details, mistakes and
 hypotheses. `results.csv` is generated from the raw result files, never edited by hand.
@@ -66,7 +86,7 @@ Run the scripts from the repository root, in order.
 
 ```
 .
-├── 00_env_check.py … 11_quant_checks.py   # numbered pipeline
+├── 00_env_check.py … 12_split_outputs.py  # numbered pipeline
 ├── common.py                              # preprocessing contract
 ├── calib_reader.py                        # ORT calibration data reader
 ├── data/split.json                        # committed; COCO images are not
@@ -156,6 +176,11 @@ python 09_eval_map.py --out results/map_split.json \
 python 10_collect_results.py
 ```
 
+The 2026-10-28 run confirms the prediction: `split_pc_all` is 8.88 ms vs 11.85 ms
+for `pc_headfp32`, but loses 5.34 mAP@0.5 and 7.16 mAP@.5:.95. It dominates
+`pc_all` (same speed, 134,945 detections instead of 0), while `pc_headfp32` remains
+the recommended model. `results.csv` contains the full `3-split` rows.
+
 `09_eval_map.py` writes ~23 MB of detections per model and `08b_profile.py` writes
 45–128 MB profiles. Both are gitignored but useful locally: detections let you
 re-score an image subset without re-running inference.
@@ -196,9 +221,8 @@ python 10_collect_results.py
   across machines; rerun FP32 alongside any variant in the same session.
 - **`results.csv` is derived.** Change a script, rerun it, then run
   `10_collect_results.py`; never edit the CSV by hand.
-- **Large files stay out of git.** The checked-out repository is ~95 MB (~120 MB
-  including git history). The COCO dataset, virtual environments, profiles and
-  detections are ignored and regenerable.
+- **Large files stay out of git.** The tracked checkout is ~115 MB. The COCO dataset,
+  virtual environments, profiles and detections are ignored and regenerable.
 
 ## Not in the repository
 

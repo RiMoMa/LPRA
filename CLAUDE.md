@@ -63,10 +63,13 @@ is numbered; keep that order in documentation and examples.
    result.
 3. **Keep the head decode FP32 in quantized models.** `output0` concatenates pixel-scale
    boxes with [0,1] scores; a single per-tensor scale collapses all scores to zero.
-   The `nodes_to_exclude` list from `05_quantize.head_nodes()` is not optional for a
-   usable model. The `*_all` variants exist only as a documented negative control.
-   Exception under test (Phase 3): `12_split_outputs.py` removes the output concat by graph surgery, so its
-   `*_split_pc_all` model quantizes everything. Do not drop the exclusion elsewhere until its mAP is measured.
+   The `nodes_to_exclude` list from `05_quantize.head_nodes()` is not optional for the
+   recommended model. The `*_all` variants exist only as a documented negative control.
+   Phase 3 measured alternative: `12_split_outputs.py` removes the output concat by graph
+   surgery, so its `*_split_pc_all` model quantizes everything. It restores non-zero
+   detections and is the fastest usable model, but loses 5.34 mAP@0.5 and 7.16
+   mAP@.5:.95 vs `pc_headfp32`; it is not the default. Reproduce with `12_split_outputs.py`
+   followed by the `latency_split.csv` / `map_split.json` runs.
 4. **Baseline quantization settings:** `QuantFormat.QDQ`, `QUInt8` activations,
    `QInt8` weights, `per_channel=True`, `reduce_range=False`, `MinMax`, head decode
    excluded. S8 activations and `reduce_range=True` are deliberate one-setting checks,
@@ -89,6 +92,8 @@ Minimum, depending on what changed:
   downstream.
 - Quantization settings: rerun `05_quantize.py`, `06_inspect_qdq.py`,
   `08_benchmark.py`, `09_eval_map.py`, `10_collect_results.py`.
+- Output split (`12_split_outputs.py`): rerun `12_split_outputs.py`, then the
+  `latency_split.csv` / `map_split.json` commands, then `10_collect_results.py`.
 - Only analysis/reporting: rerun the affected script and `10_collect_results.py`.
 - Always check that `03_parity.py` shows FP32 agreement (boxes ~1e-3 px max, scores
   ~1e-5) and that the recommended INT8 model still produces non-zero detections.

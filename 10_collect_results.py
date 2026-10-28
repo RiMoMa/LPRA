@@ -53,8 +53,9 @@ if pathlib.Path("results/latency_split.csv").exists() and pathlib.Path("results/
         for k, u in (("mean_ms", "ms"), ("p95_ms", "ms"), ("speedup", "x")):
             add("3-split", m, k, round(float(r[k]), 4), u, "08_benchmark.py --out results/latency_split.csv",
                 threads=6, pinning="cpus 0-5 (CCD0)", note="separate run; compare within 3-split rows only")
-        for k in ("mAP50", "mAP50_95", "n_dets"):
-            add("3-split", m, k, spl_map[m][k], "", "09_eval_map.py --out results/map_split.json")
+        if m in spl_map:  # a latency row may exist without an mAP row (e.g. a known 0-detection control)
+            for k in ("mAP50", "mAP50_95", "n_dets"):
+                add("3-split", m, k, spl_map[m][k], "", "09_eval_map.py --out results/map_split.json")
 
 with open("results.csv", "w", newline="") as f:
     w = csv.DictWriter(f, fieldnames=rows[0].keys()); w.writeheader(); w.writerows(rows)

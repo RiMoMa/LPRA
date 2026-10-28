@@ -1,0 +1,38 @@
+[
+  {
+    "model": "yolov8n_prep",
+    "provider": "CPUExecutionProvider",
+    "n_images": 646,
+    "n_dets": 148828,
+    "mAP50": 0.6076335810210998,
+    "AP50_car": 0.5783271591704243,
+    "AP50_motorcycle": 0.6652372210641497,
+    "AP50_bus": 0.7518533295009389,
+    "AP50_truck": 0.435116614348886,
+    "mAP50_95": 0.42234495776894637
+  },
+  {
+    "model": "yolov8n_int8_pc_headfp32",
+    "provider": "CPUExecutionProvider",
+    "n_images": 646,
+    "n_dets": 153420,
+    "mAP50": 0.6043128959338059,
+    "AP50_car": 0.5702647206303971,
+    "AP50_motorcycle": 0.669291230681485,
+    "AP50_bus": 0.7565913023598911,
+    "AP50_truck": 0.4211043300634503,
+    "mAP50_95": 0.4118604375186094
+  },
+  {
+    "model": "yolov8n_int8_split_pc_all",
+    "provider": "CPUExecutionProvider",
+    "n_images": 646,
+    "n_dets": 134945,
+    "mAP50": 0.5508905782291514,
+    "AP50_car": 0.4633541411896476,
+    "AP50_motorcycle": 0.6235382163669863,
+    "AP50_bus": 0.73901185127025,
+    "AP50_truck": 0.37765810408972195,
+    "mAP50_95": 0.34025710590182456
+  }
+]

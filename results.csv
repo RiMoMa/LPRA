@@ -93,3 +93,24 @@ phase,model,metric,value,unit,source,provider,threads,pinning,note
 2-check,yolov8n_prep.onnx,speedup,1.0,x,08_benchmark.py --out results/latency_checks.csv,CPUExecutionProvider,6,cpus 0-5 (CCD0),separate run; compare within 2-check rows only
 2-check,yolov8n_prep.onnx,mAP50,0.6076335810210998,,09_eval_map.py --out results/map_checks.json,CPUExecutionProvider,,,
 2-check,yolov8n_prep.onnx,mAP50_95,0.42234495776894637,,09_eval_map.py --out results/map_checks.json,CPUExecutionProvider,,,
+3-split,yolov8n_int8_pc_all.onnx,mean_ms,8.9603,ms,08_benchmark.py --out results/latency_split.csv,CPUExecutionProvider,6,cpus 0-5 (CCD0),separate run; compare within 3-split rows only
+3-split,yolov8n_int8_pc_all.onnx,p95_ms,9.2619,ms,08_benchmark.py --out results/latency_split.csv,CPUExecutionProvider,6,cpus 0-5 (CCD0),separate run; compare within 3-split rows only
+3-split,yolov8n_int8_pc_all.onnx,speedup,1.8624,x,08_benchmark.py --out results/latency_split.csv,CPUExecutionProvider,6,cpus 0-5 (CCD0),separate run; compare within 3-split rows only
+3-split,yolov8n_int8_pc_headfp32.onnx,mean_ms,11.8523,ms,08_benchmark.py --out results/latency_split.csv,CPUExecutionProvider,6,cpus 0-5 (CCD0),separate run; compare within 3-split rows only
+3-split,yolov8n_int8_pc_headfp32.onnx,p95_ms,12.4863,ms,08_benchmark.py --out results/latency_split.csv,CPUExecutionProvider,6,cpus 0-5 (CCD0),separate run; compare within 3-split rows only
+3-split,yolov8n_int8_pc_headfp32.onnx,speedup,1.408,x,08_benchmark.py --out results/latency_split.csv,CPUExecutionProvider,6,cpus 0-5 (CCD0),separate run; compare within 3-split rows only
+3-split,yolov8n_int8_pc_headfp32.onnx,mAP50,0.6043128959338059,,09_eval_map.py --out results/map_split.json,CPUExecutionProvider,,,
+3-split,yolov8n_int8_pc_headfp32.onnx,mAP50_95,0.4118604375186094,,09_eval_map.py --out results/map_split.json,CPUExecutionProvider,,,
+3-split,yolov8n_int8_pc_headfp32.onnx,n_dets,153420,,09_eval_map.py --out results/map_split.json,CPUExecutionProvider,,,
+3-split,yolov8n_int8_split_pc_all.onnx,mean_ms,8.8784,ms,08_benchmark.py --out results/latency_split.csv,CPUExecutionProvider,6,cpus 0-5 (CCD0),separate run; compare within 3-split rows only
+3-split,yolov8n_int8_split_pc_all.onnx,p95_ms,9.4535,ms,08_benchmark.py --out results/latency_split.csv,CPUExecutionProvider,6,cpus 0-5 (CCD0),separate run; compare within 3-split rows only
+3-split,yolov8n_int8_split_pc_all.onnx,speedup,1.8796,x,08_benchmark.py --out results/latency_split.csv,CPUExecutionProvider,6,cpus 0-5 (CCD0),separate run; compare within 3-split rows only
+3-split,yolov8n_int8_split_pc_all.onnx,mAP50,0.5508905782291514,,09_eval_map.py --out results/map_split.json,CPUExecutionProvider,,,
+3-split,yolov8n_int8_split_pc_all.onnx,mAP50_95,0.34025710590182456,,09_eval_map.py --out results/map_split.json,CPUExecutionProvider,,,
+3-split,yolov8n_int8_split_pc_all.onnx,n_dets,134945,,09_eval_map.py --out results/map_split.json,CPUExecutionProvider,,,
+3-split,yolov8n_prep.onnx,mean_ms,16.688,ms,08_benchmark.py --out results/latency_split.csv,CPUExecutionProvider,6,cpus 0-5 (CCD0),separate run; compare within 3-split rows only
+3-split,yolov8n_prep.onnx,p95_ms,17.1456,ms,08_benchmark.py --out results/latency_split.csv,CPUExecutionProvider,6,cpus 0-5 (CCD0),separate run; compare within 3-split rows only
+3-split,yolov8n_prep.onnx,speedup,1.0,x,08_benchmark.py --out results/latency_split.csv,CPUExecutionProvider,6,cpus 0-5 (CCD0),separate run; compare within 3-split rows only
+3-split,yolov8n_prep.onnx,mAP50,0.6076335810210998,,09_eval_map.py --out results/map_split.json,CPUExecutionProvider,,,
+3-split,yolov8n_prep.onnx,mAP50_95,0.42234495776894637,,09_eval_map.py --out results/map_split.json,CPUExecutionProvider,,,
+3-split,yolov8n_prep.onnx,n_dets,148828,,09_eval_map.py --out results/map_split.json,CPUExecutionProvider,,,
