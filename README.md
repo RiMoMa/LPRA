@@ -179,8 +179,9 @@ python 10_collect_results.py
   across machines; rerun FP32 alongside any variant in the same session.
 - **`results.csv` is derived.** Change a script, rerun it, then run
   `10_collect_results.py`; never edit the CSV by hand.
-- **Large files stay out of git.** The checked-in repository is ~95 MB. The COCO
-  dataset, virtual environments, profiles and detections are ignored and regenerable.
+- **Large files stay out of git.** The checked-out repository is ~95 MB (~120 MB
+  including git history). The COCO dataset, virtual environments, profiles and
+  detections are ignored and regenerable.
 
 ## Not in the repository
 
