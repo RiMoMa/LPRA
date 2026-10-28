@@ -32,8 +32,11 @@ either was to inspect the graph ONNX Runtime actually executes, not the file.
 - Result: 8.88 ms (1.88×) but −5.34 mAP@0.5 vs the head-FP32 model. My prediction got the direction right and the
   magnitude wrong: the output step is only ±1.3 px. Reading the scales inside the graph showed the same mixed-scale
   problem one level up (`Concat_8`, grid units shared across strides: up to 10 px per step) plus a score floor.
-- `13_attribute_split.py` separates the two by keeping one path FP32 at a time. **Result pending a local run;
-  until then the cause is a hypothesis, and I say so.**
+- `13_attribute_split.py` separates the two by keeping one path FP32 at a time. `_boxq` (score tail FP32)
+  reproduces the split almost exactly (0.5509/0.3396 vs 0.5509/0.3403), while `_scoreq` (box decode FP32) stays
+  within 0.14 mAP@0.5 and 0.57 mAP@.5:.95 of `pc_headfp32` and cuts detections from 153,420 to 127,782. The box
+  path owns the loss; the score path mainly removes the low-confidence tail. The mixed-scale culprit is
+  `Concat_8`, not the ±1.3 px output step. These are point estimates, without confidence intervals.
 
 ## Likely questions, short answers
 - *QDQ vs QOperator?* QDQ keeps FP32 ops and marks INT8 tensors with Q/DQ pairs; the runtime picks fusions per EP.

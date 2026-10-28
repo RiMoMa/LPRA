@@ -241,6 +241,24 @@ the prediction never looked at:
 concentrated in AP_small; `_scoreq` lands within ~1 point of `pc_headfp32`. If `_scoreq` loses much more than that,
 the score floor matters more than the per-class pattern suggests.
 
+**Results (2026-10-28, same run; `results/attribution_split.json`):**
+
+| model | detections | mAP@0.5 | mAP@.5:.95 | AP50 small | AP50 medium | AP50 large |
+|---|---:|---:|---:|---:|---:|---:|
+| `pc_headfp32` | 153,420 | 0.6043 | 0.4119 | 0.3345 | 0.6076 | 0.8040 |
+| `split_pc_all` | 134,945 | 0.5509 | 0.3403 | 0.2660 | 0.5257 | 0.7879 |
+| `split_pc_boxq` (score tail FP32) | 159,263 | 0.5509 | 0.3396 | 0.2673 | 0.5269 | 0.7860 |
+| `split_pc_scoreq` (box decode FP32) | 127,782 | 0.6030 | 0.4062 | 0.3266 | 0.6033 | 0.8041 |
+
+- **The box path owns the loss.** `_boxq` reproduces it almost exactly; `_scoreq` stays within 0.14 mAP@0.5 and
+  0.57 mAP@.5:.95 of `pc_headfp32`. The prediction held.
+- **The score path mainly removes the low-confidence tail.** Detections fall from 153,420 to 127,782 while AP
+  barely moves.
+- **Small and medium objects absorb the damage.** In relative terms, small loses ~20% and medium ~13% of AP50;
+  large loses ~2%. The absolute AP50 drop is larger for medium because it starts higher.
+- **Conclusion:** the mixed-scale hazard is one level up, in `Concat_8`; the ±1.31 px output step and the score
+  floor are not the main mechanism. These are point estimates; there are no confidence intervals yet.
+
 ### Mistakes made
 7. Predicted the split model's error from the scale of the *output* tensor only (±1.3 px) and then accepted
    "box step is the cause" when the direction matched. The magnitude did not: 1 px cannot cost 5 points at IoU 0.5.

@@ -45,7 +45,8 @@ Why this shape:
   rounds to zero. The `*_headfp32` variants exclude the 34 head-decode nodes
   (`/model.22/` outside `cv2`/`cv3`) from quantization. Phase 3 instead removes the
   final Concat and exposes `boxes`/`scores` separately; that restores non-zero scores,
-  but the box scale (±1.31 px) costs localization accuracy.
+  but the remaining loss is dominated by mixed scales in the intermediate box decode
+  (see the attribution below), not by the ±1.31 px output step alone.
 - **Per-channel weights recover most of the loss.** `pc_headfp32` is −0.33 mAP points
   vs FP32; per-tensor `pt_headfp32` is −1.19 points.
 - **U8 activations, not ORT's default S8.** S8 looks structurally identical in the
@@ -184,14 +185,56 @@ python 13_attribute_split.py
 python 10_collect_results.py
 ```
 
-The 2026-10-28 run confirms the prediction: `split_pc_all` is 8.88 ms vs 11.85 ms
-for `pc_headfp32`, but loses 5.34 mAP@0.5 and 7.16 mAP@.5:.95. It dominates
-`pc_all` (same speed, 134,945 detections instead of 0), while `pc_headfp32` remains
-the recommended model. `results.csv` contains the full `3-split` rows.
+The 2026-10-28 run measured `split_pc_all` at 8.88 ms vs 11.85 ms for
+`pc_headfp32`, but with 5.34 points less mAP@0.5 and 7.16 points less mAP@.5:.95.
+It dominates `pc_all` (same speed, 134,945 detections instead of 0), while
+`pc_headfp32` remains the recommended model. `results.csv` contains the full
+`3-split` rows.
+
+The attribution run keeps one path FP32 at a time to separate the two mechanisms:
+
+| Model | Detections | mAP@0.5 | mAP@.5:.95 | AP50 small | AP50 medium | AP50 large |
+|---|---:|---:|---:|---:|---:|---:|
+| `pc_headfp32` | 153,420 | 0.6043 | 0.4119 | 0.3345 | 0.6076 | 0.8040 |
+| `split_pc_all` | 134,945 | 0.5509 | 0.3403 | 0.2660 | 0.5257 | 0.7879 |
+| `split_pc_boxq` (score tail FP32) | 159,263 | 0.5509 | 0.3396 | 0.2673 | 0.5269 | 0.7860 |
+| `split_pc_scoreq` (box decode FP32) | 127,782 | 0.6030 | 0.4062 | 0.3266 | 0.6033 | 0.8041 |
+
+- **The box path owns the loss.** `_boxq` reproduces it almost exactly
+  (0.5509 / 0.3396 vs 0.5509 / 0.3403 for `split_pc_all`); `_scoreq` is within
+  0.14 mAP@0.5 and 0.57 mAP@.5:.95 of `pc_headfp32`.
+- **The score path mainly removes the low-confidence tail.** Detections fall from
+  153,420 to 127,782, but AP barely moves.
+- **Small and medium objects absorb the damage.** In relative terms small loses
+  ~20%, medium ~13% and large ~2% of their AP50; in absolute AP50, medium drops most
+  (−8.07 points) because it starts higher.
+- **Cause:** the mixed-scale hazard appears one level up in `Concat_8`, where centers
+  and sizes share one scale across all strides; the stride multiply turns that into
+  steps of up to ~10 px at stride 32. The ±1.31 px output step and the score floor
+  are not the main mechanism.
 
 `09_eval_map.py` writes ~23 MB of detections per model and `08b_profile.py` writes
 45–128 MB profiles. Both are gitignored but useful locally: detections let you
 re-score an image subset without re-running inference.
+
+## Presentation
+
+`presentation/slides.md` is the Marp source for the 28-slide technical talk plus
+appendix A1–A4. The figures are generated from `results/` and `results.csv` by
+`presentation/figs/make_all.py`; no number is copied into a plot by hand.
+
+```bash
+.venv/bin/python presentation/figs/make_all.py
+
+npx --yes @marp-team/marp-cli presentation/slides.md \
+  --pdf --output presentation/slides.pdf --allow-local-files
+npx --yes @marp-team/marp-cli presentation/slides.md \
+  --pptx --output presentation/slides.pptx --allow-local-files
+```
+
+Speaker notes contain the source for every measured number and are embedded in the
+PDF/PPTX exports. `presentation/figs/README.md` maps each figure to its script and
+source.
 
 ## Working with Claude web
 
