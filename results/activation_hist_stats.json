@@ -1,0 +1,13 @@
+{
+  "tensor": "/model.2/cv1/act/Mul_output_0",
+  "scale": 0.16991610825061798,
+  "zero_point": 2,
+  "clip_lo": -0.33983221650123596,
+  "clip_hi": 42.98877538740635,
+  "p0.05": -0.29751912313804496,
+  "p99.95": 12.60797435263521,
+  "int8_levels_spanned_by_central_99.9pct": 75.9521484375,
+  "frac_values_in_zero_bin": 0.12868358665920887,
+  "output_concat_scale": 2.6182219982147217,
+  "output_concat_zp": 4
+}

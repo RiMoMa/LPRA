@@ -1,0 +1,9 @@
+{
+  "n_images": 50,
+  "batch=N|boxes px|max_abs": 0.00885009765625,
+  "batch=N|scores|max_abs": 5.2869319915771484e-05,
+  "batch=N|top1_identical": true,
+  "batch=1 loop|boxes px|max_abs": 0.00885009765625,
+  "batch=1 loop|scores|max_abs": 5.2869319915771484e-05,
+  "batch=1 loop|top1_identical": true
+}

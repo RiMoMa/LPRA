@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.swp
+*.swo
+.idea/
+.vscode/
+
+# Local environments
+.venv/
+.venv*/
+.py311/
+venv/
+env/
+
+# COCO dataset (downloaded by setup_data.py, ~1.8 GB)
+data/coco/
+
+# Heavy generated artifacts (regenerable with the numbered scripts)
+results/profile_*.json
+results/dets/
+
+# Temporary / scratch files
+*.data
+*.part
+sym_shape_infer_temp.onnx
+
+# OS
+.DS_Store

@@ -1,0 +1,5 @@
+*.onnx binary
+*.pt binary
+*.png binary
+*.jpg binary
+*.zip binary

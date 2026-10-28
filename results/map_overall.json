@@ -1,0 +1,62 @@
+[
+  {
+    "model": "yolov8n_prep",
+    "provider": "CPUExecutionProvider",
+    "n_images": 646,
+    "n_dets": 148828,
+    "mAP50": 0.6076335810210998,
+    "AP50_car": 0.5783271591704243,
+    "AP50_motorcycle": 0.6652372210641497,
+    "AP50_bus": 0.7518533295009389,
+    "AP50_truck": 0.435116614348886,
+    "mAP50_95": 0.42234495776894637
+  },
+  {
+    "model": "yolov8n_int8_pt_all",
+    "provider": "CPUExecutionProvider",
+    "n_images": 646,
+    "n_dets": 0,
+    "mAP50": 0.0,
+    "AP50_car": 0.0,
+    "AP50_motorcycle": 0.0,
+    "AP50_bus": 0.0,
+    "AP50_truck": 0.0,
+    "mAP50_95": 0.0
+  },
+  {
+    "model": "yolov8n_int8_pt_headfp32",
+    "provider": "CPUExecutionProvider",
+    "n_images": 646,
+    "n_dets": 156451,
+    "mAP50": 0.595724613263989,
+    "AP50_car": 0.5691117751731906,
+    "AP50_motorcycle": 0.6527317021273553,
+    "AP50_bus": 0.7409104094990983,
+    "AP50_truck": 0.4201445662563117,
+    "mAP50_95": 0.41106826962040155
+  },
+  {
+    "model": "yolov8n_int8_pc_all",
+    "provider": "CPUExecutionProvider",
+    "n_images": 646,
+    "n_dets": 0,
+    "mAP50": 0.0,
+    "AP50_car": 0.0,
+    "AP50_motorcycle": 0.0,
+    "AP50_bus": 0.0,
+    "AP50_truck": 0.0,
+    "mAP50_95": 0.0
+  },
+  {
+    "model": "yolov8n_int8_pc_headfp32",
+    "provider": "CPUExecutionProvider",
+    "n_images": 646,
+    "n_dets": 153420,
+    "mAP50": 0.6043128959338059,
+    "AP50_car": 0.5702647206303971,
+    "AP50_motorcycle": 0.669291230681485,
+    "AP50_bus": 0.7565913023598911,
+    "AP50_truck": 0.4211043300634503,
+    "mAP50_95": 0.4118604375186094
+  }
+]

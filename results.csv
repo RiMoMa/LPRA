@@ -1,0 +1,95 @@
+phase,model,metric,value,unit,source,provider,threads,pinning,note
+1,yolov8n.onnx,parity[assets2] n_images,2,,03_parity.py,CPUExecutionProvider,,,
+1,yolov8n.onnx,parity[assets2] batch=N|boxes px|max_abs,0.0018310546875,,03_parity.py,CPUExecutionProvider,,,
+1,yolov8n.onnx,parity[assets2] batch=N|scores|max_abs,3.5762786865234375e-06,,03_parity.py,CPUExecutionProvider,,,
+1,yolov8n.onnx,parity[assets2] batch=N|top1_identical,True,,03_parity.py,CPUExecutionProvider,,,
+1,yolov8n.onnx,parity[assets2] batch=1 loop|boxes px|max_abs,0.0018310546875,,03_parity.py,CPUExecutionProvider,,,
+1,yolov8n.onnx,parity[assets2] batch=1 loop|scores|max_abs,3.5762786865234375e-06,,03_parity.py,CPUExecutionProvider,,,
+1,yolov8n.onnx,parity[assets2] batch=1 loop|top1_identical,True,,03_parity.py,CPUExecutionProvider,,,
+1,yolov8n.onnx,parity[coco50] n_images,50,,03_parity.py,CPUExecutionProvider,,,
+1,yolov8n.onnx,parity[coco50] batch=N|boxes px|max_abs,0.00885009765625,,03_parity.py,CPUExecutionProvider,,,
+1,yolov8n.onnx,parity[coco50] batch=N|scores|max_abs,5.2869319915771484e-05,,03_parity.py,CPUExecutionProvider,,,
+1,yolov8n.onnx,parity[coco50] batch=N|top1_identical,True,,03_parity.py,CPUExecutionProvider,,,
+1,yolov8n.onnx,parity[coco50] batch=1 loop|boxes px|max_abs,0.00885009765625,,03_parity.py,CPUExecutionProvider,,,
+1,yolov8n.onnx,parity[coco50] batch=1 loop|scores|max_abs,5.2869319915771484e-05,,03_parity.py,CPUExecutionProvider,,,
+1,yolov8n.onnx,parity[coco50] batch=1 loop|top1_identical,True,,03_parity.py,CPUExecutionProvider,,,
+2,yolov8n_int8_pc_all.onnx,mean_ms,9.048,ms,08_benchmark.py,CPUExecutionProvider,6,cpus 0-5 (CCD0),median of 3 repeats x 200 runs
+2,yolov8n_int8_pc_all.onnx,p95_ms,9.5287,ms,08_benchmark.py,CPUExecutionProvider,6,cpus 0-5 (CCD0),median of 3 repeats x 200 runs
+2,yolov8n_int8_pc_all.onnx,mean_spread,0.1035,ms,08_benchmark.py,CPUExecutionProvider,6,cpus 0-5 (CCD0),median of 3 repeats x 200 runs
+2,yolov8n_int8_pc_all.onnx,speedup,1.8425,x,08_benchmark.py,CPUExecutionProvider,6,cpus 0-5 (CCD0),median of 3 repeats x 200 runs
+2,yolov8n_int8_pc_all.onnx,size_mb,3.6131,MB,08_benchmark.py,CPUExecutionProvider,6,cpus 0-5 (CCD0),median of 3 repeats x 200 runs
+2,yolov8n_int8_pc_headfp32.onnx,mean_ms,11.9012,ms,08_benchmark.py,CPUExecutionProvider,6,cpus 0-5 (CCD0),median of 3 repeats x 200 runs
+2,yolov8n_int8_pc_headfp32.onnx,p95_ms,12.3876,ms,08_benchmark.py,CPUExecutionProvider,6,cpus 0-5 (CCD0),median of 3 repeats x 200 runs
+2,yolov8n_int8_pc_headfp32.onnx,mean_spread,0.0518,ms,08_benchmark.py,CPUExecutionProvider,6,cpus 0-5 (CCD0),median of 3 repeats x 200 runs
+2,yolov8n_int8_pc_headfp32.onnx,speedup,1.4008,x,08_benchmark.py,CPUExecutionProvider,6,cpus 0-5 (CCD0),median of 3 repeats x 200 runs
+2,yolov8n_int8_pc_headfp32.onnx,size_mb,3.6747,MB,08_benchmark.py,CPUExecutionProvider,6,cpus 0-5 (CCD0),median of 3 repeats x 200 runs
+2,yolov8n_int8_pt_all.onnx,mean_ms,9.0183,ms,08_benchmark.py,CPUExecutionProvider,6,cpus 0-5 (CCD0),median of 3 repeats x 200 runs
+2,yolov8n_int8_pt_all.onnx,p95_ms,9.4485,ms,08_benchmark.py,CPUExecutionProvider,6,cpus 0-5 (CCD0),median of 3 repeats x 200 runs
+2,yolov8n_int8_pt_all.onnx,mean_spread,0.0123,ms,08_benchmark.py,CPUExecutionProvider,6,cpus 0-5 (CCD0),median of 3 repeats x 200 runs
+2,yolov8n_int8_pt_all.onnx,speedup,1.8485,x,08_benchmark.py,CPUExecutionProvider,6,cpus 0-5 (CCD0),median of 3 repeats x 200 runs
+2,yolov8n_int8_pt_all.onnx,size_mb,3.5368,MB,08_benchmark.py,CPUExecutionProvider,6,cpus 0-5 (CCD0),median of 3 repeats x 200 runs
+2,yolov8n_int8_pt_headfp32.onnx,mean_ms,11.8356,ms,08_benchmark.py,CPUExecutionProvider,6,cpus 0-5 (CCD0),median of 3 repeats x 200 runs
+2,yolov8n_int8_pt_headfp32.onnx,p95_ms,12.2278,ms,08_benchmark.py,CPUExecutionProvider,6,cpus 0-5 (CCD0),median of 3 repeats x 200 runs
+2,yolov8n_int8_pt_headfp32.onnx,mean_spread,0.1224,ms,08_benchmark.py,CPUExecutionProvider,6,cpus 0-5 (CCD0),median of 3 repeats x 200 runs
+2,yolov8n_int8_pt_headfp32.onnx,speedup,1.4085,x,08_benchmark.py,CPUExecutionProvider,6,cpus 0-5 (CCD0),median of 3 repeats x 200 runs
+2,yolov8n_int8_pt_headfp32.onnx,size_mb,3.5983,MB,08_benchmark.py,CPUExecutionProvider,6,cpus 0-5 (CCD0),median of 3 repeats x 200 runs
+2,yolov8n_prep.onnx,mean_ms,16.6706,ms,08_benchmark.py,CPUExecutionProvider,6,cpus 0-5 (CCD0),median of 3 repeats x 200 runs
+2,yolov8n_prep.onnx,p95_ms,16.9966,ms,08_benchmark.py,CPUExecutionProvider,6,cpus 0-5 (CCD0),median of 3 repeats x 200 runs
+2,yolov8n_prep.onnx,mean_spread,0.1714,ms,08_benchmark.py,CPUExecutionProvider,6,cpus 0-5 (CCD0),median of 3 repeats x 200 runs
+2,yolov8n_prep.onnx,speedup,1.0,x,08_benchmark.py,CPUExecutionProvider,6,cpus 0-5 (CCD0),median of 3 repeats x 200 runs
+2,yolov8n_prep.onnx,size_mb,12.852,MB,08_benchmark.py,CPUExecutionProvider,6,cpus 0-5 (CCD0),median of 3 repeats x 200 runs
+2,yolov8n_prep.onnx,mAP50,0.6076335810210998,,09_eval_map.py,CPUExecutionProvider,,,646 eval images
+2,yolov8n_prep.onnx,AP50_car,0.5783271591704243,,09_eval_map.py,CPUExecutionProvider,,,646 eval images
+2,yolov8n_prep.onnx,AP50_motorcycle,0.6652372210641497,,09_eval_map.py,CPUExecutionProvider,,,646 eval images
+2,yolov8n_prep.onnx,AP50_bus,0.7518533295009389,,09_eval_map.py,CPUExecutionProvider,,,646 eval images
+2,yolov8n_prep.onnx,AP50_truck,0.435116614348886,,09_eval_map.py,CPUExecutionProvider,,,646 eval images
+2,yolov8n_prep.onnx,mAP50_95,0.42234495776894637,,09_eval_map.py,CPUExecutionProvider,,,646 eval images
+2,yolov8n_prep.onnx,n_dets,148828,,09_eval_map.py,CPUExecutionProvider,,,646 eval images
+2,yolov8n_int8_pt_all.onnx,mAP50,0.0,,09_eval_map.py,CPUExecutionProvider,,,646 eval images
+2,yolov8n_int8_pt_all.onnx,AP50_car,0.0,,09_eval_map.py,CPUExecutionProvider,,,646 eval images
+2,yolov8n_int8_pt_all.onnx,AP50_motorcycle,0.0,,09_eval_map.py,CPUExecutionProvider,,,646 eval images
+2,yolov8n_int8_pt_all.onnx,AP50_bus,0.0,,09_eval_map.py,CPUExecutionProvider,,,646 eval images
+2,yolov8n_int8_pt_all.onnx,AP50_truck,0.0,,09_eval_map.py,CPUExecutionProvider,,,646 eval images
+2,yolov8n_int8_pt_all.onnx,mAP50_95,0.0,,09_eval_map.py,CPUExecutionProvider,,,646 eval images
+2,yolov8n_int8_pt_all.onnx,n_dets,0,,09_eval_map.py,CPUExecutionProvider,,,646 eval images
+2,yolov8n_int8_pt_headfp32.onnx,mAP50,0.595724613263989,,09_eval_map.py,CPUExecutionProvider,,,646 eval images
+2,yolov8n_int8_pt_headfp32.onnx,AP50_car,0.5691117751731906,,09_eval_map.py,CPUExecutionProvider,,,646 eval images
+2,yolov8n_int8_pt_headfp32.onnx,AP50_motorcycle,0.6527317021273553,,09_eval_map.py,CPUExecutionProvider,,,646 eval images
+2,yolov8n_int8_pt_headfp32.onnx,AP50_bus,0.7409104094990983,,09_eval_map.py,CPUExecutionProvider,,,646 eval images
+2,yolov8n_int8_pt_headfp32.onnx,AP50_truck,0.4201445662563117,,09_eval_map.py,CPUExecutionProvider,,,646 eval images
+2,yolov8n_int8_pt_headfp32.onnx,mAP50_95,0.41106826962040155,,09_eval_map.py,CPUExecutionProvider,,,646 eval images
+2,yolov8n_int8_pt_headfp32.onnx,n_dets,156451,,09_eval_map.py,CPUExecutionProvider,,,646 eval images
+2,yolov8n_int8_pc_all.onnx,mAP50,0.0,,09_eval_map.py,CPUExecutionProvider,,,646 eval images
+2,yolov8n_int8_pc_all.onnx,AP50_car,0.0,,09_eval_map.py,CPUExecutionProvider,,,646 eval images
+2,yolov8n_int8_pc_all.onnx,AP50_motorcycle,0.0,,09_eval_map.py,CPUExecutionProvider,,,646 eval images
+2,yolov8n_int8_pc_all.onnx,AP50_bus,0.0,,09_eval_map.py,CPUExecutionProvider,,,646 eval images
+2,yolov8n_int8_pc_all.onnx,AP50_truck,0.0,,09_eval_map.py,CPUExecutionProvider,,,646 eval images
+2,yolov8n_int8_pc_all.onnx,mAP50_95,0.0,,09_eval_map.py,CPUExecutionProvider,,,646 eval images
+2,yolov8n_int8_pc_all.onnx,n_dets,0,,09_eval_map.py,CPUExecutionProvider,,,646 eval images
+2,yolov8n_int8_pc_headfp32.onnx,mAP50,0.6043128959338059,,09_eval_map.py,CPUExecutionProvider,,,646 eval images
+2,yolov8n_int8_pc_headfp32.onnx,AP50_car,0.5702647206303971,,09_eval_map.py,CPUExecutionProvider,,,646 eval images
+2,yolov8n_int8_pc_headfp32.onnx,AP50_motorcycle,0.669291230681485,,09_eval_map.py,CPUExecutionProvider,,,646 eval images
+2,yolov8n_int8_pc_headfp32.onnx,AP50_bus,0.7565913023598911,,09_eval_map.py,CPUExecutionProvider,,,646 eval images
+2,yolov8n_int8_pc_headfp32.onnx,AP50_truck,0.4211043300634503,,09_eval_map.py,CPUExecutionProvider,,,646 eval images
+2,yolov8n_int8_pc_headfp32.onnx,mAP50_95,0.4118604375186094,,09_eval_map.py,CPUExecutionProvider,,,646 eval images
+2,yolov8n_int8_pc_headfp32.onnx,n_dets,153420,,09_eval_map.py,CPUExecutionProvider,,,646 eval images
+2-check,yolov8n_int8_pc_headfp32.onnx,mean_ms,11.5996,ms,08_benchmark.py --out results/latency_checks.csv,CPUExecutionProvider,6,cpus 0-5 (CCD0),separate run; compare within 2-check rows only
+2-check,yolov8n_int8_pc_headfp32.onnx,p95_ms,11.8239,ms,08_benchmark.py --out results/latency_checks.csv,CPUExecutionProvider,6,cpus 0-5 (CCD0),separate run; compare within 2-check rows only
+2-check,yolov8n_int8_pc_headfp32.onnx,speedup,1.4101,x,08_benchmark.py --out results/latency_checks.csv,CPUExecutionProvider,6,cpus 0-5 (CCD0),separate run; compare within 2-check rows only
+2-check,yolov8n_int8_pc_headfp32.onnx,mAP50,0.6043128959338059,,09_eval_map.py --out results/map_checks.json,CPUExecutionProvider,,,
+2-check,yolov8n_int8_pc_headfp32.onnx,mAP50_95,0.4118604375186094,,09_eval_map.py --out results/map_checks.json,CPUExecutionProvider,,,
+2-check,yolov8n_int8_pc_headfp32_rr.onnx,mean_ms,11.5854,ms,08_benchmark.py --out results/latency_checks.csv,CPUExecutionProvider,6,cpus 0-5 (CCD0),separate run; compare within 2-check rows only
+2-check,yolov8n_int8_pc_headfp32_rr.onnx,p95_ms,11.7677,ms,08_benchmark.py --out results/latency_checks.csv,CPUExecutionProvider,6,cpus 0-5 (CCD0),separate run; compare within 2-check rows only
+2-check,yolov8n_int8_pc_headfp32_rr.onnx,speedup,1.4118,x,08_benchmark.py --out results/latency_checks.csv,CPUExecutionProvider,6,cpus 0-5 (CCD0),separate run; compare within 2-check rows only
+2-check,yolov8n_int8_pc_headfp32_rr.onnx,mAP50,0.6001788373527288,,09_eval_map.py --out results/map_checks.json,CPUExecutionProvider,,,
+2-check,yolov8n_int8_pc_headfp32_rr.onnx,mAP50_95,0.41234073813229216,,09_eval_map.py --out results/map_checks.json,CPUExecutionProvider,,,
+2-check,yolov8n_int8_pc_headfp32_s8.onnx,mean_ms,32.4495,ms,08_benchmark.py --out results/latency_checks.csv,CPUExecutionProvider,6,cpus 0-5 (CCD0),separate run; compare within 2-check rows only
+2-check,yolov8n_int8_pc_headfp32_s8.onnx,p95_ms,32.9747,ms,08_benchmark.py --out results/latency_checks.csv,CPUExecutionProvider,6,cpus 0-5 (CCD0),separate run; compare within 2-check rows only
+2-check,yolov8n_int8_pc_headfp32_s8.onnx,speedup,0.5041,x,08_benchmark.py --out results/latency_checks.csv,CPUExecutionProvider,6,cpus 0-5 (CCD0),separate run; compare within 2-check rows only
+2-check,yolov8n_int8_pc_headfp32_s8.onnx,mAP50,0.6029604851838193,,09_eval_map.py --out results/map_checks.json,CPUExecutionProvider,,,
+2-check,yolov8n_int8_pc_headfp32_s8.onnx,mAP50_95,0.4128749459603322,,09_eval_map.py --out results/map_checks.json,CPUExecutionProvider,,,
+2-check,yolov8n_prep.onnx,mean_ms,16.3564,ms,08_benchmark.py --out results/latency_checks.csv,CPUExecutionProvider,6,cpus 0-5 (CCD0),separate run; compare within 2-check rows only
+2-check,yolov8n_prep.onnx,p95_ms,16.5387,ms,08_benchmark.py --out results/latency_checks.csv,CPUExecutionProvider,6,cpus 0-5 (CCD0),separate run; compare within 2-check rows only
+2-check,yolov8n_prep.onnx,speedup,1.0,x,08_benchmark.py --out results/latency_checks.csv,CPUExecutionProvider,6,cpus 0-5 (CCD0),separate run; compare within 2-check rows only
+2-check,yolov8n_prep.onnx,mAP50,0.6076335810210998,,09_eval_map.py --out results/map_checks.json,CPUExecutionProvider,,,
+2-check,yolov8n_prep.onnx,mAP50_95,0.42234495776894637,,09_eval_map.py --out results/map_checks.json,CPUExecutionProvider,,,
