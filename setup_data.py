@@ -20,8 +20,10 @@ import zipfile
 ROOT = pathlib.Path(__file__).resolve().parent
 COCO = ROOT / "data" / "coco"
 URLS = {
-    "val2017.zip": "https://images.cocodataset.org/zips/val2017.zip",
-    "annotations_trainval2017.zip": "https://images.cocodataset.org/annotations/annotations_trainval2017.zip",
+    # The official COCO host serves these over HTTP; its HTTPS certificate does not
+    # match images.cocodataset.org, so urllib fails verification with https:// URLs.
+    "val2017.zip": "http://images.cocodataset.org/zips/val2017.zip",
+    "annotations_trainval2017.zip": "http://images.cocodataset.org/annotations/annotations_trainval2017.zip",
 }
 
 
