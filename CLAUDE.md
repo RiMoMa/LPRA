@@ -46,6 +46,7 @@ python 07_activation_histogram.py
 python 08_benchmark.py
 python 09_eval_map.py
 python 10_collect_results.py
+python 12_split_outputs.py     # Phase 3, optional; see README for its benchmark/mAP commands
 ```
 
 All scripts use relative paths and must be run from the repository root. The pipeline
@@ -64,12 +65,14 @@ is numbered; keep that order in documentation and examples.
    boxes with [0,1] scores; a single per-tensor scale collapses all scores to zero.
    The `nodes_to_exclude` list from `05_quantize.head_nodes()` is not optional for a
    usable model. The `*_all` variants exist only as a documented negative control.
+   Exception under test (Phase 3): `12_split_outputs.py` removes the output concat by graph surgery, so its
+   `*_split_pc_all` model quantizes everything. Do not drop the exclusion elsewhere until its mAP is measured.
 4. **Baseline quantization settings:** `QuantFormat.QDQ`, `QUInt8` activations,
    `QInt8` weights, `per_channel=True`, `reduce_range=False`, `MinMax`, head decode
    excluded. S8 activations and `reduce_range=True` are deliberate one-setting checks,
    not defaults.
 5. **Do not hand-edit `results.csv`.** It is rebuilt by `10_collect_results.py` from
-   `results/parity_*.json`, `latency_raw.csv`, `map_overall.json`, `latency_checks.csv`
+   `results/parity_*.json`, `latency_raw.csv`, `map_overall.json`, `latency_checks.csv`, `latency_split.csv`, `map_split.json`
    and `map_checks.json`.
 6. **Do not commit generated heavy files:** `data/coco/`, `results/profile_*.json`,
    `results/dets/`, `.venv/`, `.py311/`, `*.data`, or editor scratch files. See

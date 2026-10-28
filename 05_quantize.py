@@ -16,7 +16,7 @@ def calib_reader():
     split = json.load(open("data/split.json"))
     return CocoCalibReader([f"data/coco/val2017/{split['files'][str(i)]}" for i in split["calib"]])
 
-def build(out, per_channel, exclude, reader, **overrides):
+def build(out, per_channel, exclude, reader, src=PREP, **overrides):
     """One INT8 variant. overrides lets 11_quant_checks change exactly one setting against this baseline."""
     kw = dict(
         quant_format=QuantFormat.QDQ,          # annotate FP32 graph; ORT fuses DQ->Op->Q into int kernels at load
@@ -29,7 +29,7 @@ def build(out, per_channel, exclude, reader, **overrides):
     )
     kw.update(overrides)
     reader.rewind()
-    quantize_static(PREP, out, reader, **kw)
+    quantize_static(src, out, reader, **kw)
     print("wrote", out)
 
 if __name__ == "__main__":

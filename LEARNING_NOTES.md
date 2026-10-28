@@ -165,3 +165,27 @@ so compare only within one run.
 ### Mistakes made
 5. Predicted S8 ≈ U8 latency from the instruction-level argument alone. The bigger effect was a missing graph fusion,
    which sits one level above instructions. Check the runtime graph before reasoning about kernels.
+
+## Phase 3 — fix the output-concat hazard in the graph (`12_split_outputs.py`)
+
+### Concepts
+- **[ONNX]** A graph output is only a tensor *name* plus a `ValueInfoProto` (type, shape). Graph surgery = delete
+  `Concat_9`, rename its two input tensors to `boxes`/`scores`, move their `value_info` entries into `graph.output`.
+  `onnx.checker.check_model(full_check=True)` then runs strict shape inference over the edited graph.
+- **[ONNX]** Rename tensors only after checking who reads them. Here `Concat_9` was the only consumer of both; if
+  anything else read them, renaming the producer's output would silently cut that edge.
+- **[ONNX]** Phase 2 changed the *quantizer's* view (`nodes_to_exclude`). Phase 3 changes the *graph* so it is
+  quantizable as is. Same hazard, two levels.
+
+### Predictions (written 2026-10-28, before any COCO run)
+- `split_pc_all` has non-zero detections: `scores` gets its own scale (~1/255) instead of ~2.5.
+- `boxes` keeps a ~640/255 ≈ 2.5 px step (±1.25 px rounding, in letterboxed 640 space). Expect mAP@.5:.95 to drop
+  more than mAP@0.5 vs `pc_headfp32`, since tight IoU thresholds feel 1 px errors and IoU 0.5 barely does.
+- Latency close to `*_all` (~9 ms in Phase 2's run), because the DFL Softmax runs as QLinearSoftmax again.
+
+### Checks done without COCO (Claude web, ORT 1.29, not results)
+- Surgery is exact: concat(boxes, scores) vs `output0` max|d| = 0 on random input, batch 2.
+- Smoke quantization with 4 random-noise calibration images: `boxes` scale 2.503 (range 0–638), as predicted. But
+  `scores` got range 0–0.08: noise images make no confident detections, so MinMax fits the scores to 0.08 and any
+  real score above that would clip. **Calibration data defines the ranges; this is why the reader must be real,
+  deployment-preprocessed images.** The COCO run decides the actual scores range.

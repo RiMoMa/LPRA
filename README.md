@@ -60,6 +60,7 @@ Run the scripts from the repository root, in order.
 | `09_eval_map.py` | COCO AP@0.5 on 646 images, 4 vehicle classes | `results/map_overall.json`, `results/dets/*.json` |
 | `10_collect_results.py` | Rebuild the long-format table from raw files | `results.csv` |
 | `11_quant_checks.py` | One-setting checks: `reduce_range`, S8 activations | `models/*_rr.onnx`, `*_s8.onnx` |
+| `12_split_outputs.py` | Phase 3: graph surgery splits `output0` into `boxes` + `scores`, then INT8 with no exclusions | `models/yolov8n_split.onnx`, `*_int8_split_pc_all.onnx` |
 
 ## Repository layout
 
@@ -136,6 +137,22 @@ python 09_eval_map.py --out results/map_checks.json \
   models/yolov8n_int8_pc_headfp32.onnx \
   models/yolov8n_int8_pc_headfp32_rr.onnx \
   models/yolov8n_int8_pc_headfp32_s8.onnx
+python 10_collect_results.py
+```
+
+Phase 3 output split (graph surgery instead of excluding the head decode):
+
+```bash
+python 12_split_outputs.py
+python 08_benchmark.py --out results/latency_split.csv \
+  models/yolov8n_prep.onnx \
+  models/yolov8n_int8_pc_headfp32.onnx \
+  models/yolov8n_int8_pc_all.onnx \
+  models/yolov8n_int8_split_pc_all.onnx
+python 09_eval_map.py --out results/map_split.json \
+  models/yolov8n_prep.onnx \
+  models/yolov8n_int8_pc_headfp32.onnx \
+  models/yolov8n_int8_split_pc_all.onnx
 python 10_collect_results.py
 ```
 

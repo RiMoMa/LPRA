@@ -43,6 +43,19 @@ for m, r in chk.iterrows():
     for k in ("mAP50", "mAP50_95"):
         add("2-check", m, k, chk_map[m][k], "", "09_eval_map.py --out results/map_checks.json")
 
+# Phase 3 output split (12_split_outputs.py): own run with its own FP32 row, same rule as the checks
+if pathlib.Path("results/latency_split.csv").exists() and pathlib.Path("results/map_split.json").exists():
+    spl = pd.read_csv("results/latency_split.csv").groupby("model").agg(
+        mean_ms=("mean_ms", "median"), p95_ms=("p95_ms", "median"))
+    spl_map = {r["model"] + ".onnx": r for r in json.load(open("results/map_split.json"))}
+    spl["speedup"] = spl.loc["yolov8n_prep.onnx", "mean_ms"] / spl.mean_ms
+    for m, r in spl.iterrows():
+        for k, u in (("mean_ms", "ms"), ("p95_ms", "ms"), ("speedup", "x")):
+            add("3-split", m, k, round(float(r[k]), 4), u, "08_benchmark.py --out results/latency_split.csv",
+                threads=6, pinning="cpus 0-5 (CCD0)", note="separate run; compare within 3-split rows only")
+        for k in ("mAP50", "mAP50_95", "n_dets"):
+            add("3-split", m, k, spl_map[m][k], "", "09_eval_map.py --out results/map_split.json")
+
 with open("results.csv", "w", newline="") as f:
     w = csv.DictWriter(f, fieldnames=rows[0].keys()); w.writeheader(); w.writerows(rows)
 

@@ -18,7 +18,7 @@ gt = COCO("data/coco/annotations/instances_val2017.json")
 def detect(sess, img_id):
     bgr = cv2.imread(f"data/coco/val2017/{split['files'][str(img_id)]}")
     x, (g, left, top) = preprocess(bgr)
-    y = torch.from_numpy(sess.run(None, {"images": x})[0])
+    y = torch.from_numpy(np.concatenate(sess.run(None, {"images": x}), 1))   # split models: [boxes, scores]
     d = non_max_suppression(y, conf_thres=0.001, iou_thres=0.7, multi_label=True, max_det=300)[0].numpy()
     h, w = bgr.shape[:2]
     d[:, [0, 2]] = ((d[:, [0, 2]] - left) / g).clip(0, w)  # undo letterbox -> original pixel coords
